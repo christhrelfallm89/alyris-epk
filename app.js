@@ -579,12 +579,14 @@ function init() {
     }, 7000);
   }
 
-  const refreshButtons = Array.from(
-    document.querySelectorAll('[data-action="refreshStats"]')
+  // Wire up refresh buttons (supports both the newer data-action selector and older id-based selector)
+  const refreshButtons = new Set(
+    Array.from(document.querySelectorAll('[data-action="refreshStats"]'))
   );
-  for (const btn of refreshButtons) {
-    btn.addEventListener("click", () => loadSheetData());
-  }
+  const legacyRefresh = document.querySelector("#refreshBtn");
+  if (legacyRefresh) refreshButtons.add(legacyRefresh);
+
+  for (const btn of refreshButtons) btn.addEventListener("click", () => loadSheetData());
   loadSheetData();
 }
 
