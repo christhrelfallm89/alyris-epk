@@ -28,7 +28,7 @@ const CONFIG = {
     website: "https://alyrisband.com",
     tiktok: "https://tiktok.com/@alyrisband",
     instagram: "https://instagram.com/alyrisband",
-    youtube: "https://youtube.com/alyrisband",
+    youtube: "https://www.youtube.com/@ALYRISBand",
     facebook: "https://www.facebook.com/share/1CBNjjaBgW/?mibextid=wwXIfr",
     spotify: "https://open.spotify.com/artist/2OLxuGyo18gD3Xj7QZVXg9?si=hwSqS-DlQByonLoHRYDfSw",
   },
