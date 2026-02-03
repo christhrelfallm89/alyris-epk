@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="2400" height="1200" viewBox="0 0 2400 1200" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="EPK hero placeholder">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#0b0f19"/>
+      <stop offset="40%" stop-color="#111827"/>
+      <stop offset="100%" stop-color="#000000"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="35%" cy="30%" r="60%">
+      <stop offset="0%" stop-color="#60a5fa" stop-opacity="0.30"/>
+      <stop offset="50%" stop-color="#a78bfa" stop-opacity="0.14"/>
+      <stop offset="100%" stop-color="#000000" stop-opacity="0"/>
+    </radialGradient>
+    <pattern id="grid" width="80" height="80" patternUnits="userSpaceOnUse">
+      <path d="M 80 0 L 0 0 0 80" fill="none" stroke="#ffffff" stroke-opacity="0.06" stroke-width="2"/>
+    </pattern>
+  </defs>
+
+  <rect width="2400" height="1200" fill="url(#bg)"/>
+  <rect width="2400" height="1200" fill="url(#glow)"/>
+  <rect width="2400" height="1200" fill="url(#grid)"/>
+
+  <g fill="#ffffff" fill-opacity="0.92" font-family="ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto" text-anchor="middle">
+    <text x="1200" y="560" font-size="44" letter-spacing="6">ARTIST EPK</text>
+    <text x="1200" y="640" font-size="20" fill-opacity="0.7">Replace assets/hero.svg with your press image</text>
+  </g>
+</svg>
