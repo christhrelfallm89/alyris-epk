@@ -579,7 +579,12 @@ function init() {
     }, 7000);
   }
 
-  $("#refreshBtn").addEventListener("click", () => loadSheetData());
+  const refreshButtons = Array.from(
+    document.querySelectorAll('[data-action="refreshStats"]')
+  );
+  for (const btn of refreshButtons) {
+    btn.addEventListener("click", () => loadSheetData());
+  }
   loadSheetData();
 }
 
