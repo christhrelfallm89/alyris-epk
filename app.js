@@ -154,13 +154,14 @@ function columnLetterToIndex(colLetter) {
   return idx - 1;
 }
 
-function getSheetCell(rows, colLetter, rowNumber1Based) {
+function getSheetCell(rows, colLetter, rowNumber1Based, colOffset = 0) {
   const rowIndex = Number(rowNumber1Based) - 1;
   const colIndex = columnLetterToIndex(colLetter);
   if (!Array.isArray(rows)) return "";
   if (!Number.isInteger(rowIndex) || rowIndex < 0 || rowIndex >= rows.length) return "";
   if (!Number.isInteger(colIndex) || colIndex < 0) return "";
-  return String(rows[rowIndex]?.[colIndex] ?? "").trim();
+  const i = colIndex + (Number(colOffset) || 0);
+  return String(rows[rowIndex]?.[i] ?? "").trim();
 }
 
 function parseSpotifyTopCities(rawText, max = 3) {
@@ -424,11 +425,17 @@ async function loadSheetData() {
     return;
   }
 
-  // Spotify Top Cities is pulled from a fixed cell in the sheet
-  // (cell I6 as specified by the spreadsheet setup).
-  const spotifyTopCities = parseSpotifyTopCities(getSheetCell(rows, "I", 6), 3);
-
   const headerMap = findHeaderMap(rows);
+
+  // Spotify Top Cities is pulled from a fixed cell in the sheet (I6).
+  // Google Sheets CSV exports sometimes include a leading blank column, shifting indices.
+  // If we detected a shifted header row (e.g. Platform Name not in col A), reuse that shift.
+  const inferredColShift = headerMap?.idxPlatform ? Math.max(0, headerMap.idxPlatform) : 0;
+  const topCitiesRaw =
+    getSheetCell(rows, "I", 6, 0) ||
+    (inferredColShift ? getSheetCell(rows, "I", 6, inferredColShift) : "");
+  const spotifyTopCities = parseSpotifyTopCities(topCitiesRaw, 3);
+
   const dataRows = headerMap ? rows.slice(headerMap.dataStartIndex) : rows;
 
   const stats = dataRows
