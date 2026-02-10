@@ -144,6 +144,42 @@ function parseCSV(csvText) {
   return rows;
 }
 
+function columnLetterToIndex(colLetter) {
+  const s = String(colLetter || "").trim().toUpperCase();
+  if (!/^[A-Z]+$/.test(s)) return null;
+  let idx = 0;
+  for (let i = 0; i < s.length; i++) {
+    idx = idx * 26 + (s.charCodeAt(i) - 64);
+  }
+  return idx - 1;
+}
+
+function getSheetCell(rows, colLetter, rowNumber1Based) {
+  const rowIndex = Number(rowNumber1Based) - 1;
+  const colIndex = columnLetterToIndex(colLetter);
+  if (!Array.isArray(rows)) return "";
+  if (!Number.isInteger(rowIndex) || rowIndex < 0 || rowIndex >= rows.length) return "";
+  if (!Number.isInteger(colIndex) || colIndex < 0) return "";
+  return String(rows[rowIndex]?.[colIndex] ?? "").trim();
+}
+
+function parseSpotifyTopCities(rawText, max = 3) {
+  const raw = String(rawText ?? "");
+  if (!raw.trim()) return [];
+
+  // Cell format example:
+  // {"country":"GB","city":"London","numberOfListeners":6}, {"country":"GB","city":"Bristol","numberOfListeners":4}
+  // We only extract the city fields.
+  const cities = [];
+  const re = /"city"\s*:\s*"([^"]+)"/g;
+  let match;
+  while ((match = re.exec(raw)) && cities.length < max) {
+    const city = String(match[1] ?? "").trim();
+    if (city && !cities.includes(city)) cities.push(city);
+  }
+  return cities;
+}
+
 function toDisplayNumber(raw) {
   const trimmed = String(raw ?? "").trim();
   if (!trimmed) return "—";
@@ -280,7 +316,6 @@ function buildStatCard({
           <div class="text-2xl font-semibold tracking-tight ${valueClass}">${toDisplayNumber(value)}</div>
           ${hasSecondary ? `<div class=\"text-xs text-white/55 whitespace-nowrap\">${secondaryInlineLabel} · ${toDisplayNumber(secondaryValue)}</div>` : ""}
         </div>
-        <div class="mt-1 text-xs text-white/45">Live from Sheet</div>
       </div>
     </div>
   `;
@@ -388,6 +423,10 @@ async function loadSheetData() {
     setStatus("error", "CSV returned no rows.");
     return;
   }
+
+  // Spotify Top Cities is pulled from a fixed cell in the sheet
+  // (cell I6 as specified by the spreadsheet setup).
+  const spotifyTopCities = parseSpotifyTopCities(getSheetCell(rows, "I", 6), 3);
 
   const headerMap = findHeaderMap(rows);
   const dataRows = headerMap ? rows.slice(headerMap.dataStartIndex) : rows;
@@ -514,6 +553,19 @@ async function loadSheetData() {
         })
       );
     }
+
+    // Spotify Top Cities (from sheet cell I6)
+    if (spotifyTopCities.length) {
+      social.push(
+        buildStatCard({
+          icon: ICONS.spotify,
+          title: "Spotify",
+          label: "Top Cities",
+          value: spotifyTopCities.join(" · "),
+          href: CONFIG.LINKS.spotify,
+        })
+      );
+    }
   }
   if (facebook) {
     social.push(
@@ -526,17 +578,6 @@ async function loadSheetData() {
       })
     );
   }
-
-  // Add Website card
-  social.push(
-    buildStatCard({
-      icon: ICONS.streams,
-      title: "Website",
-      label: "alyrisband.com",
-      value: "Visit",
-      href: CONFIG.LINKS.website,
-    })
-  );
 
   // Keep totals consistent even if missing
   while (totals.length < 2) {
