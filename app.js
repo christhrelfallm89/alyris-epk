@@ -283,6 +283,7 @@ function buildStatCard({
   tone,
   secondaryLabel,
   secondaryValue,
+  valueClassName,
 }) {
   const a = document.createElement("a");
 
@@ -300,6 +301,8 @@ function buildStatCard({
   const titleClass = tone === "gold" ? "text-amber-200/70" : "text-white/55";
   const hasSecondary = String(secondaryValue ?? "").trim() !== "";
   const secondaryInlineLabel = (secondaryLabel || "Secondary").trim();
+  const valueClassNameFinal =
+    valueClassName || `text-2xl font-semibold tracking-tight ${valueClass}`;
 
   a.innerHTML = `
     <div class="flex items-start justify-between gap-4">
@@ -314,7 +317,7 @@ function buildStatCard({
       </div>
       <div class="text-right">
         <div class="flex items-baseline justify-end gap-2">
-          <div class="text-2xl font-semibold tracking-tight ${valueClass}">${toDisplayNumber(value)}</div>
+          <div class="${valueClassNameFinal}">${toDisplayNumber(value)}</div>
           ${hasSecondary ? `<div class=\"text-xs text-white/55 whitespace-nowrap\">${secondaryInlineLabel} · ${toDisplayNumber(secondaryValue)}</div>` : ""}
         </div>
       </div>
@@ -570,8 +573,9 @@ async function loadSheetData() {
         icon: ICONS.spotify,
         title: "Spotify",
         label: "Top Cities",
-        value: spotifyTopCities.join(" · "),
+        value: spotifyTopCities.join(", "),
         href: CONFIG.LINKS.spotify,
+        valueClassName: "text-sm sm:text-base font-medium tracking-tight text-white/85",
       })
     );
   }
