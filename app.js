@@ -553,19 +553,20 @@ async function loadSheetData() {
         })
       );
     }
+  }
 
-    // Spotify Top Cities (from sheet cell I6)
-    if (spotifyTopCities.length) {
-      social.push(
-        buildStatCard({
-          icon: ICONS.spotify,
-          title: "Spotify",
-          label: "Top Cities",
-          value: spotifyTopCities.join(" · "),
-          href: CONFIG.LINKS.spotify,
-        })
-      );
-    }
+  // Spotify Top Cities (from sheet cell I6)
+  // Render independently of whether the Spotify row was detected.
+  if (spotifyTopCities.length) {
+    social.push(
+      buildStatCard({
+        icon: ICONS.spotify,
+        title: "Spotify",
+        label: "Top Cities",
+        value: spotifyTopCities.join(" · "),
+        href: CONFIG.LINKS.spotify,
+      })
+    );
   }
   if (facebook) {
     social.push(
